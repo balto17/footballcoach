@@ -2,7 +2,6 @@ package CFBsimPack;
 
 import java.util.ArrayList;
 import java.util.Vector;
-import java.io.Serializable;
 
 /**
  * Base player class that others extend. Has name, overall, potential, and football IQ.
