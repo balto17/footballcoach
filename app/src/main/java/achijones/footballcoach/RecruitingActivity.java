@@ -276,22 +276,59 @@ public class RecruitingActivity extends AppCompatActivity {
         final Button buttonExpandAll = (Button) findViewById(R.id.buttonRecruitExpandCollapse);
         buttonExpandAll.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (buttonExpandAll.getText().toString().equals("Expand All")) {
-                    // Expand everyone
-                    for (int i = 0; i < players.size(); ++i) {
-                        recruitList.expandGroup(i, false);
-                        buttonExpandAll.setText("Collapse All");
+                AlertDialog.Builder builder = new AlertDialog.Builder(RecruitingActivity.this);
+                builder.setTitle("Filter Recruits");
+                final String[] sels = {"Expand All", "Collapse All", "Remove Unaffordable Players"};
+                builder.setItems(sels, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int item) {
+                        // Do something with the selection
+                        if (item == 0) {
+                            // Expand everyone
+                            for (int i = 0; i < players.size(); ++i) {
+                                recruitList.expandGroup(i, false);
+                            }
+                        } else if (item == 1) {
+                            // Collapse everyone
+                            for (int i = 0; i < players.size(); ++i) {
+                                recruitList.collapseGroup(i);
+                            }
+                        } else if (item == 2) {
+                            // Remove unaffordable
+                            removeUnaffordable(players);
+                            removeUnaffordable(availAll);
+                            removeUnaffordable(availQBs);
+                            removeUnaffordable(availRBs);
+                            removeUnaffordable(availWRs);
+                            removeUnaffordable(availOLs);
+                            removeUnaffordable(availKs);
+                            removeUnaffordable(availSs);
+                            removeUnaffordable(availCBs);
+                            removeUnaffordable(availF7s);
+
+                            // Notify that players were removed
+                            expListAdapter.notifyDataSetChanged();
+                        }
+
+                        dialog.dismiss();
                     }
-                } else {
-                    // Collapse everyone
-                    for (int i = 0; i < players.size(); ++i) {
-                        recruitList.collapseGroup(i);
-                        buttonExpandAll.setText("Expand All");
-                    }
-                }
+                });
+                AlertDialog alert = builder.create();
+                alert.show();
             }
         });
 
+    }
+
+    public void removeUnaffordable(List<String> list) {
+        int i = 0;
+        while (i < list.size()) {
+            if (getRecruitCost(list.get(i)) > recruitingBudget) {
+                // Can't afford him
+                list.remove(i);
+            } else {
+                ++i;
+            }
+        }
     }
 
     @Override
@@ -644,7 +681,6 @@ public class RecruitingActivity extends AppCompatActivity {
      * Used for parsing through string to get cost
      */
     public int getRecruitCost(String p) {
-        // format is '$500 P. Name'
         String[] pSplit = p.split(",");
         return Integer.parseInt(pSplit[9]);
     }

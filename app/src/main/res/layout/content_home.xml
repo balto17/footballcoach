@@ -63,7 +63,7 @@
         android:layout_height="0dip"
         android:layout_weight="1"
         android:layout_gravity="center"
-        android:layout_marginBottom="40dp" >
+        android:layout_marginBottom="8dp">
         <Button
             android:layout_width="0dip"
             android:layout_height="fill_parent"
@@ -78,6 +78,17 @@
             android:text="Donate"
             android:id="@+id/buttonDonate" />
     </LinearLayout>
+
+    <Button
+        android:layout_width="250dp"
+        android:layout_height="0dip"
+        android:layout_weight="0.8"
+        android:text="Pro Football Coach"
+        android:id="@+id/buttonProFootballCoach"
+        android:layout_gravity="center"
+        android:layout_marginBottom="30dp"
+        android:background="@drawable/button_shape_fc"
+        android:textColor="#ffffff"/>
 
     <TextView
         android:layout_width="wrap_content"

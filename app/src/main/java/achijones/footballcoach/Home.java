@@ -129,6 +129,19 @@ public class Home extends AppCompatActivity {
             }
         });
 
+        Button proButton = (Button) findViewById(R.id.buttonProFootballCoach);
+        proButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                try {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.achijones.profootballcoach")));
+                } catch (android.content.ActivityNotFoundException anfe) {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.achijones.profootballcoach")));
+                }
+            }
+        });
+
+
+
     }
 
     @Override

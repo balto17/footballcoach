@@ -929,12 +929,12 @@ public class Game implements Serializable {
         }
 
         int blockAdv = offense.getCompositeOLRush() - defense.getCompositeF7Rush();
-        int yardsGain = (int) ((selRB.ratRushSpd + blockAdv + getHFadv()) * Math.random() / 10 + offense.teamStratOff.getRYB()/2 - defense.teamStratDef.getRYB()/2);
+        int yardsGain = (int) ((selRB.ratRushSpd + blockAdv + getHFadv()) * Math.random() / 10 + (double)offense.teamStratOff.getRYB()/2 - (double)defense.teamStratDef.getRYB()/2);
         if (yardsGain < 2) {
-            yardsGain += selRB.ratRushPow/20 - 3 - defense.teamStratDef.getRYB()/2;
+            yardsGain += selRB.ratRushPow/20 - 3 - (double)defense.teamStratDef.getRYB()/2;
         } else {
             //break free from tackles
-            if (Math.random() < ( 0.28 + ( offense.teamStratOff.getRAB() - defense.teamStratDef.getRYB()/2 )/50 )) {
+            if (Math.random() < ( 0.28 + ( offense.teamStratOff.getRAB() - (double)defense.teamStratDef.getRYB()/2 )/50 )) {
                 yardsGain += selRB.ratRushEva/5 * Math.random();
             }
         }
