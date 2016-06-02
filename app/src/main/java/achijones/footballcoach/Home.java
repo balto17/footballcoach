@@ -105,7 +105,7 @@ public class Home extends AppCompatActivity {
         donateButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(Home.this);
-                builder.setMessage("Football Coach is entirely free and will be forever.\n\nHowever, if you would like to donate and support the app, you can via PayPal. " +
+                builder.setMessage("College Football Coach is entirely free and will be forever.\n\nHowever, if you would like to donate and support the app, you can via PayPal. " +
                                         "As a thank you for donating, I will even add a name of your choice to the list of player names!")
                         .setPositiveButton("Donate", new DialogInterface.OnClickListener() {
                             @Override

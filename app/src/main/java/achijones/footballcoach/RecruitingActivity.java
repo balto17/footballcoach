@@ -399,7 +399,7 @@ public class RecruitingActivity extends AppCompatActivity {
      */
     private String getPlayerNameCost(String player) {
         String[] ps = player.split(",");
-        return "$" + ps[9] + " " + ps[0] + " " + ps[1] + ", Overall: " + ps[8];
+        return "$" + ps[9] + " " + ps[0] + " " + ps[1] + ">" + ps[8] + ", Pot: " + getLetterGrade(ps[3]);
     }
 
     /**
@@ -1163,7 +1163,7 @@ public class RecruitingActivity extends AppCompatActivity {
 
         public View getGroupView(int groupPosition, boolean isExpanded,
                                  View convertView, ViewGroup parent) {
-            String[] playerCost = getPlayerNameCost( getGroup(groupPosition) ).split(",");
+            String[] playerCost = getPlayerNameCost( getGroup(groupPosition) ).split(">");
             String playerLeft = playerCost[0];
             String playerRight = playerCost[1];
             if (convertView == null) {

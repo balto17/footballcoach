@@ -550,9 +550,23 @@ public class MainActivity extends AppCompatActivity {
 
         List<String> playerHeaders = currentTeam.getPlayerStatsExpandListStr();
         Map<String, List<String>> playerInfos = currentTeam.getPlayerStatsExpandListMap(playerHeaders);
-        ExpandableListAdapterPlayerStats expListAdapterPlayerStats =
+        final ExpandableListAdapterPlayerStats expListAdapterPlayerStats =
                 new ExpandableListAdapterPlayerStats(this, this, playerHeaders, playerInfos);
         expListPlayerStats.setAdapter(expListAdapterPlayerStats);
+
+        expListPlayerStats.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(
+                    ExpandableListView parent, View v,
+                    int groupPosition, int childPosition,
+                    long id) {
+                if (expListAdapterPlayerStats.getGroup(groupPosition).equals("BENCH > BENCH")) {
+                    // Bench player, examine
+                    examinePlayer(expListAdapterPlayerStats.getChild(groupPosition, childPosition));
+                }
+                return false;
+            }
+        });
     }
 
     private void updateSchedule(){
@@ -651,6 +665,21 @@ public class MainActivity extends AppCompatActivity {
                     .setView(getLayoutInflater().inflate(R.layout.game_dialog, null));
             AlertDialog dialog = builder.create();
             dialog.show();
+
+            // Game score
+            final TextView gameAwayScore = (TextView) dialog.findViewById(R.id.gameDialogScoreAway);
+            final TextView gameHomeScore = (TextView) dialog.findViewById(R.id.gameDialogScoreHome);
+            final TextView gameAwayScoreName = (TextView) dialog.findViewById(R.id.gameDialogScoreAwayName);
+            final TextView gameHomeScoreName = (TextView) dialog.findViewById(R.id.gameDialogScoreHomeName);
+            gameAwayScore.setText(g.awayScore + "");
+            gameHomeScore.setText(g.homeScore + "");
+            gameAwayScoreName.setText(g.awayTeam.getStrAbbrWL_2Lines());
+            gameHomeScoreName.setText(g.homeTeam.getStrAbbrWL_2Lines());
+
+            final TextView gameDialogScoreDashName = (TextView) dialog.findViewById(R.id.gameDialogScoreDashName);
+            if (g.numOT > 0) {
+                gameDialogScoreDashName.setText(g.numOT + "OT");
+            } else gameDialogScoreDashName.setText("@");
 
             final TextView gameL = (TextView) dialog.findViewById(R.id.gameDialogLeft);
             gameL.setText(gameStr[0]);
@@ -1405,7 +1434,7 @@ public class MainActivity extends AppCompatActivity {
         if (p == null) p = currentTeam.getQB(0);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         ArrayList<String> pStatsList = p.getDetailAllStatsList(currentTeam.numGames());
-        if (p.injury != null) pStatsList.add(0, "Injured: " + p.injury.toString() + "> ");
+        if (p.injury != null) pStatsList.add(0, "[I]Injured: " + p.injury.toString());
         String[] pStatsArray = pStatsList.toArray(new String[pStatsList.size()]);
         PlayerStatsListArrayAdapter pStatsAdapter = new PlayerStatsListArrayAdapter(this, pStatsArray);
         builder.setAdapter(pStatsAdapter, null)

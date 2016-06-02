@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Football Coach</string>
+    <string name="app_name">College Football Coach</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="action_team_strategy">Set Team Strategy</string>
     <string name="action_team_lineup">Set Team Lineup</string>
@@ -176,7 +176,7 @@
         Cedric
     </string>
     <string name="tutBasics">
-        In Football Coach, you take the role of a newly hired coach at your college of choice.
+        In College Football Coach, you take the role of a newly hired coach at your college of choice.
         As coach, it will be your responsibility to manage your team\'s strategy, simulate through seasons, recruit new players, and above all, win championships.
     </string>
     <string name="tutPlayingSeason">

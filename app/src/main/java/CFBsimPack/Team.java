@@ -2052,6 +2052,14 @@ public class Team {
         } else return 1;
     }
 
+    public String getStrAbbrWL() {
+        return abbr + " (" + wins + "-" + losses + ")";
+    }
+
+    public String getStrAbbrWL_2Lines() {
+        return abbr + "\n(" + wins + "-" + losses + ")";
+    }
+
     /**
      * Gets the number of in-conference wins, used for CCG rankings
      * @return number of in-conf wins
