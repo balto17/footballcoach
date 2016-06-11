@@ -26,7 +26,7 @@ public class Injury {
 
     public Injury(Player p) {
         // Generate an injury
-        duration = Math.abs((int)(rando.nextGaussian()*4 + 1));
+        duration = Math.abs((int)(rando.nextGaussian()*3 + 1));
         if (duration == 0) duration = 1;
         if (Math.random() < 0.01) duration = 15;
         description = injuries[ (int)(Math.random() * injuries.length) ];

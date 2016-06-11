@@ -28,6 +28,7 @@ public class League {
     public ArrayList<Conference> conferences;
     public ArrayList<Team> teamList;
     public ArrayList<String> nameList;
+    public ArrayList<String> lastNameList;
     public ArrayList< ArrayList<String> > newsStories;
 
     public LeagueRecords leagueRecords;
@@ -84,7 +85,7 @@ public class League {
      * Creates League, sets up Conferences, reads team names and conferences from file.
      * Also schedules games for every team.
      */
-    public League(String namesCSV, boolean difficulty) {
+    public League(String namesCSV, String lastNamesCSV, boolean difficulty) {
         isHardMode = difficulty;
         heismanDecided = false;
         hasScheduledBowls = false;
@@ -115,11 +116,18 @@ public class League {
         yearStartLongestWinStreak = new TeamStreak(getYear(), getYear(), 0, "XXX");
         longestActiveWinStreak = new TeamStreak(getYear(), getYear(), 0, "XXX");
 
-        //read names from file
+        // Read first names from file
         nameList = new ArrayList<String>();
         String[] namesSplit = namesCSV.split(",");
         for (String n : namesSplit) {
             nameList.add(n.trim());
+        }
+
+        // Read last names from file
+        lastNameList = new ArrayList<String>();
+        namesSplit = lastNamesCSV.split(",");
+        for (String n : namesSplit) {
+            lastNameList.add(n.trim());
         }
 
 
@@ -221,7 +229,7 @@ public class League {
      * Create League from saved file.
      * @param saveFile file that league is saved in
      */
-    public League(File saveFile, String namesCSV) {
+    public League(File saveFile, String namesCSV, String lastNamesCSV) {
         heismanDecided = false;
         hasScheduledBowls = false;
         blessDevelopingStory = false;
@@ -344,11 +352,18 @@ public class League {
             bufferedReader.close();
 
 
-            //read names from file
+            // Read first names from file
             nameList = new ArrayList<String>();
             String[] namesSplit = namesCSV.split(",");
             for (String n : namesSplit) {
                 nameList.add(n.trim());
+            }
+
+            // Read last names from file
+            lastNameList = new ArrayList<String>();
+            namesSplit = lastNamesCSV.split(",");
+            for (String n : namesSplit) {
+                lastNameList.add(n.trim());
             }
 
             //Get longest active win streak
@@ -1292,8 +1307,8 @@ public class League {
     public String getRandName() {
         if (Math.random() > 0.0025) {
             int fn = (int) (Math.random() * nameList.size());
-            int ln = (int) (Math.random() * nameList.size());
-            return nameList.get(fn) + " " + nameList.get(ln);
+            int ln = (int) (Math.random() * lastNameList.size());
+            return nameList.get(fn) + " " + lastNameList.get(ln);
         } else {
             return donationNames[ (int)(Math.random()*donationNames.length) ];
         }
@@ -1376,6 +1391,13 @@ public class League {
         Collections.sort( teamList, new TeamCompPrestige() );
         for (int t = 0; t < teamList.size(); ++t) {
             teamList.get(t).rankTeamPrestige = t+1;
+        }
+
+        if (currentWeek == 0) {
+            Collections.sort(teamList, new TeamCompRecruitClass());
+            for (int t = 0; t < teamList.size(); ++t) {
+                teamList.get(t).rankTeamRecruitClass = t + 1;
+            }
         }
 
     }
@@ -1823,6 +1845,12 @@ public class League {
                 for (int i = 0; i < teams.size(); ++i) {
                     t = teams.get(i);
                     rankings.add(t.getRankStrStarUser(i + 1) + "," + t.strRepWithBowlResults() + "," + t.teamPrestige);
+                }
+                break;
+            case 15: Collections.sort( teams, new TeamCompRecruitClass() );
+                for (int i = 0; i < teams.size(); ++i) {
+                    t = teams.get(i);
+                    rankings.add(t.getRankStrStarUser(i + 1) + "," + t.strRepWithPrestige() + "," + t.getRecruitingClassRat());
                 }
                 break;
             default: Collections.sort( teams, new TeamCompPoll() );
@@ -2332,6 +2360,13 @@ class TeamCompPrestige implements Comparator<Team> {
     @Override
     public int compare( Team a, Team b ) {
         return a.teamPrestige > b.teamPrestige ? -1 : a.teamPrestige == b.teamPrestige ? 0 : 1;
+    }
+}
+
+class TeamCompRecruitClass implements Comparator<Team> {
+    @Override
+    public int compare( Team a, Team b ) {
+        return a.getRecruitingClassRat() > b.getRecruitingClassRat() ? -1 : a.getRecruitingClassRat() == b.getRecruitingClassRat() ? 0 : 1;
     }
 }
 

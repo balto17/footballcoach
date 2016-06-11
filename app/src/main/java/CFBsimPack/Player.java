@@ -90,6 +90,10 @@ public class Player {
         return position + " " + name + " [" + getYrStr() + "] Ovr: " + ratOvr;
     }
 
+    public String getYrOvrPot_Str() {
+        return "[" + getYrStr() + "] Ovr: " + ratOvr + ", Pot: " + getLetterGrade(ratPot);
+    }
+
     public String getPosNameYrOvrPot_NoInjury() {
         return position + " " + getInitialName() + " [" + getYrStr() + "] Ovr: " + ratOvr + ", Pot: " + getLetterGrade(ratPot);
     }

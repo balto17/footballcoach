@@ -20,7 +20,7 @@ import java.util.ArrayList;
 public class TeamRankingsListArrayAdapter extends ArrayAdapter<String> {
     private final Context context;
     private final ArrayList<String> values;
-    private final String userTeamStrRep;
+    private String userTeamStrRep;
 
     public TeamRankingsListArrayAdapter(Context context, ArrayList<String> values, String userTeamStrRep) {
         super(context, R.layout.team_rankings_list_item, values);
@@ -54,5 +54,9 @@ public class TeamRankingsListArrayAdapter extends ArrayAdapter<String> {
         }
 
         return rowView;
+    }
+
+    public void setUserTeamStrRep(String userTeamStrRep) {
+        this.userTeamStrRep = userTeamStrRep;
     }
 }

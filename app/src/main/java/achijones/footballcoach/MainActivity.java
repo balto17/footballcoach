@@ -82,15 +82,15 @@ public class MainActivity extends AppCompatActivity {
         if(extras != null) {
             String saveFileStr = extras.getString("SAVE_FILE");
             if (saveFileStr.equals("NEW_LEAGUE_EASY")) {
-                simLeague = new League(getString(R.string.league_player_names), false);
+                simLeague = new League(getString(R.string.league_player_names), getString(R.string.league_last_names), false);
                 season = 2016;
             } else if (saveFileStr.equals("NEW_LEAGUE_HARD")) {
-                simLeague = new League(getString(R.string.league_player_names), true);
+                simLeague = new League(getString(R.string.league_player_names), getString(R.string.league_last_names), true);
                 season = 2016;
             } else if (saveFileStr.equals("DONE_RECRUITING")) {
                 File saveFile = new File(getFilesDir(), "saveLeagueRecruiting.cfb");
                 if (saveFile.exists()) {
-                    simLeague = new League(saveFile, getString(R.string.league_player_names));
+                    simLeague = new League(saveFile, getString(R.string.league_player_names), getString(R.string.league_last_names));
                     userTeam = simLeague.userTeam;
                     userTeamStr = userTeam.name;
                     userTeam.recruitPlayersFromStr(extras.getString("RECRUITS"));
@@ -99,13 +99,13 @@ public class MainActivity extends AppCompatActivity {
                     currentTeam = userTeam;
                     loadedLeague = true;
                 } else {
-                    simLeague = new League(getString(R.string.league_player_names), false);
+                    simLeague = new League(getString(R.string.league_player_names), getString(R.string.league_last_names), false);
                     season = 2016;
                 }
             } else {
                 File saveFile = new File(getFilesDir(), saveFileStr);
                 if (saveFile.exists()) {
-                    simLeague = new League(saveFile, getString(R.string.league_player_names));
+                    simLeague = new League(saveFile, getString(R.string.league_player_names), getString(R.string.league_last_names));
                     userTeam = simLeague.userTeam;
                     userTeamStr = userTeam.name;
                     simLeague.updateTeamTalentRatings();
@@ -113,12 +113,12 @@ public class MainActivity extends AppCompatActivity {
                     currentTeam = userTeam;
                     loadedLeague = true;
                 } else {
-                    simLeague = new League(getString(R.string.league_player_names), false);
+                    simLeague = new League(getString(R.string.league_player_names), getString(R.string.league_last_names), false);
                     season = 2016;
                 }
             }
         } else {
-            simLeague = new League(getString(R.string.league_player_names), false);
+            simLeague = new League(getString(R.string.league_player_names), getString(R.string.league_last_names), false);
             season = 2016;
         }
 
@@ -342,15 +342,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Plz work
         if (loadedLeague) {
-            // set rankings so that not everyone is rank #0
+            // Set rankings so that not everyone is rank #0
             simLeague.setTeamRanks();
             examineTeam(userTeam.name);
             showToasts = userTeam.showPopups;
         }
 
-
+        if (simLeague.getYear() != 2016) {
+            // Only show recruiting classes if it aint 2016
+            showRecruitingClassDialog();
+        }
 
     }
 
@@ -813,9 +815,10 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
 
         ArrayList<String> rankings = new ArrayList<String>();// = simLeague.getTeamRankingsStr(0);
-        String[] rankingsSelection = {"Poll Votes", "Conference Standings", "Strength of Sched", "Points Per Game", "Opp Points Per Game",
+        String[] rankingsSelection =
+                {"Poll Votes", "Conference Standings", "Strength of Sched", "Points Per Game", "Opp Points Per Game",
                 "Yards Per Game", "Opp Yards Per Game", "Pass Yards Per Game", "Rush Yards Per Game",
-                "Opp Pass YPG", "Opp Rush YPG", "TO Differential", "Off Talent", "Def Talent", "Prestige"};
+                "Opp Pass YPG", "Opp Rush YPG", "TO Differential", "Off Talent", "Def Talent", "Prestige", "Recruiting Class"};
         Spinner teamRankingsSpinner = (Spinner) dialog.findViewById(R.id.spinnerTeamRankings);
         ArrayAdapter<String> teamRankingsSpinnerAdapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, rankingsSelection);
@@ -832,6 +835,11 @@ public class MainActivity extends AppCompatActivity {
                     public void onItemSelected(
                             AdapterView<?> parent, View view, int position, long id) {
                         ArrayList<String> rankings = simLeague.getTeamRankingsStr(position);
+                        if (position == 15) {
+                            teamRankingsAdapter.setUserTeamStrRep(userTeam.strRepWithPrestige());
+                        } else {
+                            teamRankingsAdapter.setUserTeamStrRep(userTeam.strRepWithBowlResults());
+                        }
                         teamRankingsAdapter.clear();
                         teamRankingsAdapter.addAll(rankings);
                         teamRankingsAdapter.notifyDataSetChanged();
@@ -841,6 +849,25 @@ public class MainActivity extends AppCompatActivity {
                         // do nothing
                     }
                 });
+    }
+
+    public void showRecruitingClassDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Recruiting Class Rankings")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //do nothing?
+                    }
+                })
+                .setView(getLayoutInflater().inflate(R.layout.simple_list_dialog, null));
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        final ListView teamRankingsList = (ListView) dialog.findViewById(R.id.listViewDialog);
+        final TeamRankingsListArrayAdapter teamRankingsAdapter =
+                new TeamRankingsListArrayAdapter(this, simLeague.getTeamRankingsStr(15), userTeam.strRepWithPrestige());
+        teamRankingsList.setAdapter(teamRankingsAdapter);
     }
 
     public void showLeagueHistoryDialog() {
@@ -1435,10 +1462,11 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         ArrayList<String> pStatsList = p.getDetailAllStatsList(currentTeam.numGames());
         if (p.injury != null) pStatsList.add(0, "[I]Injured: " + p.injury.toString());
+        pStatsList.add(0, "[B]" + p.getYrOvrPot_Str());
         String[] pStatsArray = pStatsList.toArray(new String[pStatsList.size()]);
         PlayerStatsListArrayAdapter pStatsAdapter = new PlayerStatsListArrayAdapter(this, pStatsArray);
         builder.setAdapter(pStatsAdapter, null)
-                .setTitle(p.getPosNameYrOvrPot_NoInjury())
+                .setTitle(p.position + " " + p.name)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

@@ -83,6 +83,7 @@ public class Team {
     public int rankTeamOffTalent;
     public int rankTeamDefTalent;
     public int rankTeamPrestige;
+    public int rankTeamRecruitClass;
     public int rankTeamPollScore;
     public int rankTeamStrengthOfWins;
 
@@ -1436,7 +1437,7 @@ public class Team {
         if (numInjured < numStarters) {
             for (int i = 0; i < numStarters; ++i) {
                 Player p = players.get(i);
-                if (Math.random() < Math.pow(1 - (double)p.ratDur/100, 2) && numInjured < numStarters) {
+                if (Math.random() < Math.pow(1 - (double)p.ratDur/100, 3) && numInjured < numStarters) {
                     // injury!
                     p.injury = new Injury(p);
                     playersInjured.add(p);
@@ -1535,6 +1536,41 @@ public class Team {
             comp += getF7(i).ratFootIQ/7;
         }
         return comp / 20;
+    }
+
+    /**
+     * Gets the recruiting class strength.
+     * Adds up all the ovrs of freshman
+     * @return class strength as a number
+     */
+    public int getRecruitingClassRat() {
+        int classStrength = 0;
+        int numFreshman = 0;
+        ArrayList<Player> allPlayers = getAllPlayers();
+        for (Player p : allPlayers) {
+            if (p.year == 1 && p.ratOvr > 65) {
+                // Is freshman
+                classStrength += p.ratOvr - 30;
+                numFreshman++;
+            }
+        }
+
+        if (numFreshman > 0)
+            return classStrength * (classStrength/numFreshman) / 100;
+        else return 0;
+    }
+
+    public ArrayList<Player> getAllPlayers() {
+        ArrayList<Player> allPlayersList = new ArrayList<>();
+        allPlayersList.addAll(teamQBs);
+        allPlayersList.addAll(teamRBs);
+        allPlayersList.addAll(teamWRs);
+        allPlayersList.addAll(teamOLs);
+        allPlayersList.addAll(teamKs);
+        allPlayersList.addAll(teamSs);
+        allPlayersList.addAll(teamCBs);
+        allPlayersList.addAll(teamF7s);
+        return allPlayersList;
     }
 
     public PlayerQB getQB(int depth) {
@@ -1769,6 +1805,10 @@ public class Team {
         ts0.append(teamPrestige + ",");
         ts0.append("Prestige" + ",");
         ts0.append(getRankStr(rankTeamPrestige) + "%\n");
+
+        ts0.append(getRecruitingClassRat() + ",");
+        ts0.append("Recruit Class" + ",");
+        ts0.append(getRankStr(rankTeamRecruitClass) + "%\n");
 
         return ts0.toString();
     }
@@ -2116,6 +2156,14 @@ public class Team {
      */
     public String strRepWithBowlResults() {
         return "#" + rankTeamPollScore + " " + abbr + " (" + wins + "-" + losses + ") " + confChampion + " " + semiFinalWL + natChampWL;
+    }
+
+    /**
+     * Str rep of team, with prestige
+     * @return ranking abbr (Pres: XX)
+     */
+    public String strRepWithPrestige() {
+        return "#" + rankTeamPollScore + " " + abbr + " (Pres: " + teamPrestige + ")";
     }
 
     /**
