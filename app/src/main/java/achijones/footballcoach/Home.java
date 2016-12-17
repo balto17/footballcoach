@@ -101,31 +101,14 @@ public class Home extends AppCompatActivity {
             }
         });
 
-        Button donateButton = (Button) findViewById(R.id.buttonDonate);
-        donateButton.setOnClickListener(new View.OnClickListener() {
+        Button hoopsButton = (Button) findViewById(R.id.buttonHoopsCoach);
+        hoopsButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(Home.this);
-                builder.setMessage("College Football Coach is entirely free and will be forever.\n\nHowever, if you would like to donate and support the app, you can via PayPal. " +
-                                        "As a thank you for donating, I will even add a name of your choice to the list of player names!")
-                        .setPositiveButton("Donate", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                // Actually go back to main menu
-                                Intent intent = new Intent();
-                                intent.setAction(Intent.ACTION_VIEW);
-                                intent.addCategory(Intent.CATEGORY_BROWSABLE);
-                                intent.setData(Uri.parse("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=GAJZ8MFAY73D6"));
-                                startActivity(intent);
-                            }
-                        })
-                        .setNegativeButton("Not Now", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                // Do nothing
-                            }
-                        });
-                AlertDialog dialog = builder.create();
-                dialog.show();
+                try {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=io.coachapps.collegebasketballcoach")));
+                } catch (android.content.ActivityNotFoundException anfe) {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=io.coachapps.collegebasketballcoach")));
+                }
             }
         });
 

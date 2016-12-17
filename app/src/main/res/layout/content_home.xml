@@ -49,15 +49,6 @@
             android:id="@+id/buttonLoadGame" />
     </LinearLayout>
 
-    <Button
-        android:layout_width="250dp"
-        android:layout_height="0dip"
-        android:layout_weight="1"
-        android:text="How to Play"
-        android:id="@+id/buttonTutorial"
-        android:layout_gravity="center"
-        android:layout_marginBottom="8dp" />
-
     <LinearLayout
         android:layout_width="250dp"
         android:layout_height="0dip"
@@ -75,9 +66,21 @@
             android:layout_width="0dip"
             android:layout_height="fill_parent"
             android:layout_weight="1"
-            android:text="Donate"
-            android:id="@+id/buttonDonate" />
+            android:text="Tutorial"
+            android:id="@+id/buttonTutorial" />
     </LinearLayout>
+
+
+    <Button
+        android:layout_width="250dp"
+        android:layout_height="0dip"
+        android:layout_weight="0.8"
+        android:text="College Hoops Coach"
+        android:id="@+id/buttonHoopsCoach"
+        android:layout_gravity="center"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/button_shape_fc_accent"
+        android:textColor="#ffffff" />
 
     <Button
         android:layout_width="250dp"
